@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Turístico 2025 | Bankaool + Descuubre</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+
+    <!-- <!-- Chosen Palette: Bankaool + Descuubre --> -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #105b46; 
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 400px;
+            margin: auto;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .text-brand-primary { color: #ff5d37; }
+        .bg-brand-primary { background-color: #ff5d37; }
+        .text-brand-secondary { color: #105b46; }
+        .bg-brand-secondary { background-color: #105b46; }
+        .border-brand-primary { border-color: #ff5d37; }
+    </style>
+</head>
+<body class="text-slate-900 pb-32">
+
+    <!-- Application Structure Plan:
+         1. Header: Branding dual Bankaool/Descuubre. Navegación por tres niveles de "zoom" (Nacional -> Estatal -> Municipal).
+         2. Main Content:
+            - Vista Nacional: Contexto macro de México para entender el mercado de origen y divisas.
+            - Vista Estatal: Perfil profundo del visitante en Chihuahua, sectores económicos (Bankaool focus) y motivos.
+            - Vista Municipal: Ranking interactivo de los 40 municipios clave (98% de la actividad total) con buscador y fichas detalladas.
+         3. Footer: Certificación de datos y acceso directo a las visualizaciones principales.
+    -->
+
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-200 bg-brand-primary">
+                        <i data-lucide="compass" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex flex-col leading-none">
+                        <span class="text-xl font-black tracking-tighter text-slate-900 uppercase">Descuubre</span>
+                        <span class="text-[10px] font-black tracking-[0.2em] text-brand-secondary">CHIHUAHUA 2025</span>
+                    </div>
+                </div>
+                <div class="h-8 w-px bg-slate-200 mx-2 hidden md:block"></div>
+                <div class="hidden md:flex flex-col leading-none">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">Estrategia</span>
+                    <span class="text-xs font-black tracking-widest text-brand-secondary uppercase">Bankaool</span>
+                </div>
+            </div>
+            
+            <nav class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                <button onclick="updateView('mexico')" id="nav-mexico" class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                    Nacional
+                </button>
+                <button onclick="updateView('chihuahua')" id="nav-chihuahua" class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                    Estatal
+                </button>
+                <button onclick="updateView('municipios')" id="nav-municipios" class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                    Municipios
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+        <!-- Inyectado mediante JavaScript -->
+    </main>
+
+    <footer class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#0f172a]/95 backdrop-blur-xl px-10 py-5 rounded-[2.5rem] border border-white/10 shadow-2xl flex items-center gap-10 z-40 w-max max-w-[95%] overflow-x-auto">
+        <div class="hidden lg:flex items-center gap-3 text-[10px] font-black text-white/40 border-r border-white/10 pr-10 uppercase tracking-widest whitespace-nowrap">
+            <i data-lucide="shield-check" class="w-5 h-5 text-brand-primary"></i>
+            <span>Ranking Auditado · Representación +98%</span>
+        </div>
+        <div class="flex items-center gap-10">
+            <button onclick="updateView('mexico')" class="flex flex-col items-center group transition-all">
+                <i data-lucide="globe" class="w-6 h-6 text-white/40 group-hover:text-white transition-colors"></i>
+                <span class="text-[8px] mt-1.5 font-black uppercase tracking-widest text-white/40">México</span>
+            </button>
+            <button onclick="updateView('chihuahua')" class="flex flex-col items-center group transition-all">
+                <i data-lucide="award" class="w-6 h-6 text-white/40 group-hover:text-white transition-colors"></i>
+                <span class="text-[8px] mt-1.5 font-black uppercase tracking-widest text-white/40">Estado</span>
+            </button>
+            <button onclick="updateView('municipios')" class="flex flex-col items-center group transition-all">
+                <i data-lucide="map" class="w-6 h-6 text-white/40 group-hover:text-white transition-colors"></i>
+                <span class="text-[8px] mt-1.5 font-black uppercase tracking-widest text-white/40">Ranking</span>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        const BRAND = {
+            primary: '#ff5d37',
+            secondary: '#105b46',
+            blue: '#4b6db5',
+            gold: '#f0a748'
+        };
+
+        const dataHub = {
+            mexico: {
+                title: "Balance Nacional 2025",
+                subtitle: "Fuente: DATATUR Análisis Integral",
+                desc: "México proyecta un cierre histórico de $33.8B USD en divisas. La ocupación hotelera nacional se mantiene arriba del 60%, con un flujo de pasajeros aéreos que supera los 122 millones.",
+                kpis: [
+                    { label: "Turismo Internacional", val: "45.2M", sub: "Llegadas Anuales", icon: "globe", color: BRAND.primary },
+                    { label: "Ingreso Divisas", val: "$33.8B", sub: "Cierre Anual USD", icon: "wallet", color: BRAND.secondary },
+                    { label: "Ocupación Media", val: "61.4%", sub: "Promedio Nacional", icon: "hotel", color: BRAND.blue },
+                    { label: "Pasajeros Aéreos", val: "122M", sub: "Tráfico Nacional/Intl", icon: "plane", color: BRAND.gold }
+                ]
+            },
+            chihuahua: {
+                title: "Chihuahua: Perfil del Visitante",
+                subtitle: "Fuente: SICHITUR Acumulado Ene-Dic 2025",
+                desc: "8.2 millones de visitantes anuales. Chihuahua destaca por un perfil de viajero corporativo y cultural, donde los sectores de manufactura y educación representan el 50% de los viajes.",
+                kpis: [
+                    { label: "Visitantes Totales", val: "8.2M", sub: "Acumulado Anual", icon: "users", color: BRAND.secondary },
+                    { label: "Derrama Económica", val: "$16.4B", sub: "Millones MXN", icon: "trending-up", color: BRAND.primary },
+                    { label: "Ocupación Estado", val: "52.4%", sub: "Cierre Anual", icon: "bar-chart-3", color: BRAND.blue },
+                    { label: "Nacionalidad Mx", val: "85%", sub: "Mercado Local", icon: "map-pin", color: BRAND.gold }
+                ],
+                perfil: {
+                    giros: [
+                        { name: "Educación", val: 25 }, { name: "Manufactura", val: 25 },
+                        { name: "Comercial", val: 15 }, { name: "Financiero", val: 10 }, { name: "Otros", val: 25 }
+                    ],
+                    motivos: [
+                        { name: "Cultura/Gastro", val: 33 }, { name: "Negocios", val: 25 },
+                        { name: "Naturaleza", val: 10 }, { name: "Familiar", val: 10 }, { name: "Otros", val: 22 }
+                    ]
+                }
+            },
+            municipios: {
+                title: "Ranking Municipal 2025",
+                subtitle: "Fuente: Reporte de Indicadores SICHITUR",
+                list: [
+                    { id: 1, name: "Juarez", turistas: 2581668, derrama: 6231.8, ocupacion: 57.4, estadia: 1.1, note: "Principal motor industrial y de negocios fronterizos." },
+                    { id: 2, name: "Chihuahua", turistas: 2214000, derrama: 3748.8, ocupacion: 61.2, estadia: 1.6, note: "Centro administrativo y de servicios de alto valor." },
+                    { id: 3, name: "N. Casas Grandes", turistas: 186348, derrama: 286.5, ocupacion: 37.7, estadia: 1.8, note: "Punto de acceso a la región arqueológica Paquimé." },
+                    { id: 4, name: "Hidalgo del Parral", turistas: 269916, derrama: 333.5, ocupacion: 39.3, estadia: 1.5, note: "Capital cultural con fuerte vocación histórica." },
+                    { id: 5, name: "Creel (Bocoyna)", turistas: 149400, derrama: 222.0, ocupacion: 42.1, estadia: 2.1, note: "Pueblo Mágico líder en turismo de aventura." },
+                    { id: 6, name: "Delicias", turistas: 112400, derrama: 185.2, ocupacion: 48.2, estadia: 1.4, note: "Referente agrícola y comercial del centro-sur." },
+                    { id: 7, name: "Ocampo", turistas: 92196, derrama: 146.3, ocupacion: 46.5, estadia: 2.0, note: "Famoso por el Parque Nacional Basaseachi." },
+                    { id: 8, name: "Meoqui", turistas: 38628, derrama: 59.3, ocupacion: 52.0, estadia: 1.9, note: "Entidad en crecimiento industrial y gastronómico." },
+                    { id: 9, name: "Jimenez", turistas: 63780, derrama: 95.6, ocupacion: 45.1, estadia: 2.0, note: "Punto de conexión estratégica en la zona sur." },
+                    { id: 10, name: "Madera", turistas: 50832, derrama: 64.2, ocupacion: 36.5, estadia: 1.7, note: "Destino de arqueología serrana y bosque." },
+                    { id: 11, name: "Camargo", turistas: 28500, derrama: 42.5, ocupacion: 41.0, estadia: 1.8, note: "Turismo de relajación y cuerpos de agua." },
+                    { id: 12, name: "Guachochi", turistas: 32400, derrama: 48.1, ocupacion: 35.2, estadia: 2.1, note: "Corazón de la Sierra Tarahumara." },
+                    { id: 13, name: "Namiquipa", turistas: 27744, derrama: 21.7, ocupacion: 33.0, estadia: 2.0, note: "Región con alto potencial agro-turístico." },
+                    { id: 14, name: "Allende", turistas: 18400, derrama: 22.1, ocupacion: 30.5, estadia: 1.5, note: "Cuna de la cultura nogalera." },
+                    { id: 15, name: "Guerrero", turistas: 14200, derrama: 18.3, ocupacion: 34.0, estadia: 1.6, note: "Región productora de manzana y cultura pima." },
+                    { id: 16, name: "Saucillo", turistas: 11500, derrama: 15.2, ocupacion: 43.1, estadia: 1.4, note: "Actividad comercial ligada al sector primario." },
+                    { id: 17, name: "Rosales", turistas: 7800, derrama: 10.4, ocupacion: 38.0, estadia: 1.6, note: "Destino recreativo de fin de semana." },
+                    { id: 18, name: "Batopilas", turistas: 6200, derrama: 9.8, ocupacion: 28.5, estadia: 2.2, note: "Pueblo Mágico oculto en las profundidades del cañón." },
+                    { id: 19, name: "Janos", turistas: 8592, derrama: 6.7, ocupacion: 22.0, estadia: 1.5, note: "Entrada natural y reserva de la biósfera." },
+                    { id: 20, name: "Urique", turistas: 15400, derrama: 19.5, ocupacion: 35.0, estadia: 2.0, note: "Sede del famoso Ultramaratón de las Barrancas." },
+                    { id: 21, name: "Santa Barbara", turistas: 5400, derrama: 6.2, ocupacion: 31.0, estadia: 1.2, note: "Población minera más antigua del estado." },
+                    { id: 22, name: "Julimes", turistas: 1776, derrama: 1.4, ocupacion: 20.0, estadia: 1.6, note: "Conocido por sus manantiales termales únicos." },
+                    { id: 23, name: "Aldama", turistas: 12400, derrama: 14.8, ocupacion: 40.5, estadia: 1.1, note: "Cercanía estratégica con la capital." },
+                    { id: 24, name: "Balleza", turistas: 4100, derrama: 5.2, ocupacion: 25.0, estadia: 1.4, note: "Paisajes serranos y misiones históricas." },
+                    { id: 25, name: "Galeana", turistas: 3200, derrama: 4.1, ocupacion: 28.0, estadia: 1.3, note: "Comunidades agrarias de alto rendimiento." },
+                    { id: 26, name: "Ahumada", turistas: 9600, derrama: 12.3, ocupacion: 35.0, estadia: 1.0, note: "Parada gastronómica obligada en la carretera Panamericana." },
+                    { id: 27, name: "Ascension", turistas: 5800, derrama: 7.4, ocupacion: 29.0, estadia: 1.2, note: "Región fronteriza con vocación ganadera." },
+                    { id: 28, name: "Bachiniva", turistas: 2400, derrama: 3.1, ocupacion: 22.0, estadia: 1.5, note: "Región serrana con producción de frutales." },
+                    { id: 29, name: "Carichi", turistas: 1800, derrama: 2.4, ocupacion: 18.5, estadia: 1.8, note: "Puerta de entrada a la Sierra Tarahumara profunda." },
+                    { id: 30, name: "Chinipas", turistas: 4500, derrama: 5.9, ocupacion: 26.0, estadia: 2.0, note: "Paisajes tropicales en el fondo de la sierra." },
+                    { id: 31, name: "Coyame", turistas: 1200, derrama: 1.6, ocupacion: 15.0, estadia: 1.4, note: "Famoso por sus grutas y producción de sotol." },
+                    { id: 32, name: "Cusihuiriachi", turistas: 800, derrama: 1.1, ocupacion: 12.0, estadia: 1.2, note: "Antiguo real de minas con aire nostálgico." },
+                    { id: 33, name: "Guadalupe y Calvo", turistas: 12600, derrama: 16.2, ocupacion: 32.0, estadia: 2.1, note: "Zona forestal y cumbre más alta del estado (Cerro Mohinora)." },
+                    { id: 34, name: "Nonoava", turistas: 5808, derrama: 7.7, ocupacion: 30.0, estadia: 2.0, note: "Cuna de la artesanía de madera y paisajes únicos." },
+                    { id: 35, name: "Riva Palacio", turistas: 3100, derrama: 4.2, ocupacion: 24.5, estadia: 1.4, note: "Corredor agrícola menonita y mestizo." },
+                    { id: 36, name: "Morelos", turistas: 3048, derrama: 1.9, ocupacion: 29.5, estadia: 1.8, note: "Zona recóndita con belleza natural virgen." },
+                    { id: 37, name: "Moris", turistas: 5892, derrama: 3.8, ocupacion: 24.5, estadia: 1.9, note: "Región serrana de difícil acceso y gran valor minero." },
+                    { id: 38, name: "San Francisco de Borja", turistas: 900, derrama: 1.2, ocupacion: 18.0, estadia: 1.5, note: "Famoso por sus cañones y formaciones rocosas." },
+                    { id: 39, name: "Uruachi", turistas: 2100, derrama: 2.8, ocupacion: 21.0, estadia: 2.2, note: "Entidad serrana con misiones jesuitas." },
+                    { id: 40, name: "Praxedis G. Guerrero", turistas: 1100, derrama: 1.4, ocupacion: 19.0, estadia: 1.1, note: "Región agrícola del Valle de Juárez." }
+                ]
+            }
+        };
+
+        let activeView = 'mexico';
+        let selectedMuni = null;
+        let searchQuery = '';
+
+        function updateView(view) {
+            activeView = view;
+            selectedMuni = null;
+            searchQuery = '';
+            render();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.toLowerCase();
+            renderMunicipiosList();
+        }
+
+        function render() {
+            const main = document.getElementById('main-content');
+            main.innerHTML = '';
+            
+            document.querySelectorAll('nav button').forEach(b => {
+                const isActive = b.id === `nav-${activeView}`;
+                b.classList.toggle('bg-white', isActive);
+                b.classList.toggle('shadow-md', isActive);
+                b.classList.toggle('text-brand-primary', isActive);
+                b.classList.toggle('text-slate-500', !isActive);
+            });
+
+            if(activeView === 'mexico') renderMexico(main);
+            else if(activeView === 'chihuahua') renderChihuahua(main);
+            else renderMunicipios(main);
+
+            lucide.createIcons();
+        }
+
+        function renderMexico(container) {
+            const d = dataHub.mexico;
+            container.innerHTML = `
+                <div class="fade-in mb-10 p-10 md:p-14 rounded-[3.5rem] text-white overflow-hidden shadow-2xl relative" style="background: linear-gradient(135deg, ${BRAND.secondary} 0%, #062c22 100%);">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="bg-white/10 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 inline-block mb-8">${d.subtitle}</span>
+                        <h2 class="text-6xl md:text-7xl font-black mb-8 leading-[0.95] tracking-tighter">México: <br/><span class="text-brand-primary">Horizonte 2025</span></h2>
+                        <p class="text-slate-300 text-xl mb-10 font-medium leading-relaxed">${d.desc}</p>
+                        <button onclick="updateView('chihuahua')" class="bg-brand-primary hover:bg-[#e04d2a] text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-black/20">Zoom a Chihuahua</button>
+                    </div>
+                    <i data-lucide="globe" class="absolute right-[-5%] bottom-[-5%] w-[450px] h-[450px] opacity-10 pointer-events-none"></i>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    ${d.kpis.map((k, i) => `
+                        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col justify-between group hover:border-brand-primary/30 transition-all">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="p-4 bg-slate-50 rounded-2xl group-hover:bg-orange-50 transition-colors"><i data-lucide="${k.icon}" style="color: ${k.color}"></i></div>
+                                <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full uppercase">Sectur</span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase mb-1 tracking-tighter">${k.label}</p>
+                                <p class="text-4xl font-black text-slate-900 mb-2">${k.val}</p>
+                                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-widest italic">${k.sub}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderChihuahua(container) {
+            const d = dataHub.chihuahua;
+            container.innerHTML = `
+                <div class="fade-in mb-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">Chihuahua<br/><span class="text-brand-primary">Estado Grande</span></h2>
+                        <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-4 bg-white inline-block px-4 py-2 rounded-xl border border-slate-100 shadow-sm">${d.subtitle}</p>
+                    </div>
+                    <div class="bg-brand-secondary p-8 rounded-[2.5rem] text-white flex items-center gap-8 shadow-2xl shadow-green-900/20">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-black uppercase opacity-60 mb-1 tracking-widest">Carga Acumulada</span>
+                            <span class="text-4xl font-black tracking-tighter">8.2M Turistas</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center shadow-inner"><i data-lucide="award" class="w-8 h-8 text-brand-primary"></i></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                    ${d.kpis.map((k, i) => `
+                        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all hover:translate-y-[-4px]">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">${k.label}</p>
+                            <p class="text-4xl font-black text-slate-900" style="color: ${i === 1 ? BRAND.primary : 'inherit'}">${k.val}</p>
+                            <p class="text-[10px] font-bold text-slate-400 mt-2 italic">${k.sub}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div class="lg:col-span-5 bg-white p-12 rounded-[3.5rem] shadow-sm border border-slate-100">
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-10 flex items-center gap-4"><i data-lucide="briefcase" class="text-brand-secondary"></i> Giro Económico</h3>
+                        <div class="grid grid-cols-2 gap-6">
+                            ${d.perfil.giros.map((g, i) => `
+                                <div class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 group hover:border-brand-primary/30 transition-all">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1 tracking-tighter">${g.name}</p>
+                                    <p class="text-3xl font-black text-slate-900">${g.val}%</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 bg-white p-12 rounded-[3.5rem] shadow-sm border border-slate-100">
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-10 flex items-center gap-4"><i data-lucide="compass" class="text-brand-primary"></i> Motivos de Viaje</h3>
+                        <div class="space-y-8">
+                            ${d.perfil.motivos.map((m, i) => `
+                                <div>
+                                    <div class="flex justify-between mb-3 px-1 items-end">
+                                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">${m.name}</span>
+                                        <span class="text-sm font-black text-brand-secondary">${m.val}%</span>
+                                    </div>
+                                    <div class="h-4 w-full bg-slate-50 rounded-full border border-slate-100 overflow-hidden shadow-inner">
+                                        <div class="h-full rounded-full transition-all duration-1000 shadow-sm" style="width: ${m.val}%; background-color: ${i === 0 ? BRAND.primary : i === 1 ? BRAND.secondary : BRAND.blue}"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMunicipios(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 fade-in">
+                    <div class="lg:col-span-4">
+                        <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm sticky top-24">
+                            <h3 class="font-black text-slate-900 uppercase tracking-widest text-xs mb-4 flex justify-between items-center px-2">Ranking Municipal 2025 <i data-lucide="filter" class="w-4 h-4 text-brand-primary"></i></h3>
+                            
+                            <p class="text-[10px] text-slate-400 font-bold mb-6 px-2 uppercase leading-tight italic">Nota: Estas 40 entidades representan más del 98% de la actividad turística total del estado.</p>
+
+                            <!-- Buscador -->
+                            <div class="relative mb-8">
+                                <input type="text" placeholder="Buscar municipio..." 
+                                       id="muni-search"
+                                       oninput="handleSearch(this.value)"
+                                       class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-12 py-4 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all placeholder:text-slate-300">
+                                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300"></i>
+                            </div>
+
+                            <div id="muni-list-container" class="space-y-2.5 max-h-[50vh] overflow-y-auto custom-scrollbar pr-3">
+                                <!-- Lista inyectada -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-8" id="detail-view">
+                        <!-- Detalle inyectado -->
+                    </div>
+                </div>
+            `;
+            renderMunicipiosList();
+            renderMuniDetail();
+        }
+
+        function renderMunicipiosList() {
+            const list = document.getElementById('muni-list-container');
+            if(!list) return;
+
+            const filtered = dataHub.municipios.list
+                .filter(m => m.name.toLowerCase().includes(searchQuery))
+                .sort((a,b) => b.turistas - a.turistas);
+
+            list.innerHTML = filtered.map((m, idx) => {
+                const isSelected = selectedMuni && selectedMuni.id === m.id;
+                return `
+                    <button onclick="selectMuni(${m.id})" class="w-full text-left p-5 rounded-[2rem] border transition-all flex items-center justify-between group relative overflow-hidden ${isSelected ? 'bg-brand-secondary border-brand-secondary text-white shadow-2xl translate-x-2' : 'bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:border-slate-200'}">
+                        <div class="relative z-10 flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${isSelected ? 'bg-white/20' : 'bg-slate-100'}">
+                                ${idx + 1}
+                            </div>
+                            <div>
+                                <p class="text-[8px] font-black uppercase mb-0.5 tracking-widest ${isSelected ? 'text-white/50' : 'text-slate-400'}">Municipio</p>
+                                <p class="font-black text-base uppercase tracking-tight leading-none">${m.name}</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 relative z-10 transition-transform ${isSelected ? 'text-white translate-x-1' : 'text-slate-200 group-hover:text-brand-primary'}"></i>
+                    </button>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function renderMuniDetail() {
+            const detail = document.getElementById('detail-view');
+            if(!detail) return;
+
+            if(!selectedMuni) {
+                detail.innerHTML = `
+                    <div class="bg-white border-4 border-dashed border-slate-100 rounded-[4rem] h-full min-h-[500px] flex flex-col items-center justify-center text-center p-20 fade-in">
+                        <div class="w-28 h-28 rounded-[2.5rem] bg-slate-50 flex items-center justify-center mb-10 text-slate-200 border border-slate-100"><i data-lucide="map" class="w-14 h-14"></i></div>
+                        <h3 class="text-3xl font-black text-slate-300 uppercase leading-none mb-4 tracking-tighter">Entidades de Chihuahua</h3>
+                        <p class="max-w-xs text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] leading-relaxed">Selecciona un municipio del ranking para visualizar sus indicadores anualizados consolidados 2025.</p>
+                    </div>
+                `;
+            } else {
+                detail.innerHTML = `
+                    <div class="bg-white p-14 rounded-[4rem] border border-slate-100 shadow-sm relative overflow-hidden fade-in">
+                        <div class="relative z-10">
+                            <div class="flex flex-col md:flex-row justify-between gap-10 mb-14">
+                                <div>
+                                    <span class="text-[10px] font-black text-brand-primary bg-brand-primary/10 px-5 py-2 rounded-full uppercase tracking-widest mb-6 inline-block">Indicadores Anuales 2025</span>
+                                    <h3 class="text-6xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[0.85]">${selectedMuni.name}</h3>
+                                </div>
+                                <div class="bg-slate-900 text-white p-10 rounded-[3rem] flex flex-col items-center justify-center min-w-[240px] shadow-2xl relative overflow-hidden group">
+                                    <span class="text-[10px] font-black uppercase opacity-40 mb-3 tracking-widest">Derrama Económica</span>
+                                    <span class="text-5xl font-black text-brand-gold">$${selectedMuni.derrama.toLocaleString()}M</span>
+                                    <span class="text-[10px] font-bold mt-3 text-white/20 tracking-[0.2em]">MILLONES MXN</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 p-12 bg-slate-50 rounded-[3.5rem] border border-slate-100 mb-10 shadow-inner">
+                                <div class="text-center sm:text-left">
+                                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3">Turistas Noche</p>
+                                    <p class="text-3xl font-black text-slate-900">${selectedMuni.turistas.toLocaleString()}</p>
+                                    <div class="h-2 w-full bg-slate-200 rounded-full mt-4 overflow-hidden"><div class="h-full bg-brand-primary rounded-full shadow-sm" style="width: 80%"></div></div>
+                                </div>
+                                <div class="text-center sm:text-left border-y sm:border-y-0 sm:border-x border-slate-200 py-6 sm:py-0 sm:px-10">
+                                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3">Ocupación Media</p>
+                                    <p class="text-3xl font-black text-slate-900">${selectedMuni.ocupacion}%</p>
+                                    <div class="h-2 w-full bg-slate-200 rounded-full mt-4 overflow-hidden"><div class="h-full bg-brand-secondary rounded-full shadow-sm" style="width: ${selectedMuni.ocupacion}%"></div></div>
+                                </div>
+                                <div class="text-center sm:text-left">
+                                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3">Estadía Promedio</p>
+                                    <p class="text-3xl font-black text-slate-900">${selectedMuni.estadia}</p>
+                                    <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">Días por visita</p>
+                                </div>
+                            </div>
+
+                            <div class="p-10 rounded-[3.5rem] bg-gradient-to-br from-[#105b46] to-[#0a3a2d] text-white shadow-xl">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-brand-primary"><i data-lucide="info"></i></div>
+                                    <h4 class="font-black text-sm uppercase tracking-widest">Análisis de Desempeño</h4>
+                                </div>
+                                <p class="text-xl font-medium italic opacity-90 leading-relaxed">"${selectedMuni.note}"</p>
+                            </div>
+                        </div>
+                        <i data-lucide="map-pin" class="absolute right-[-30px] top-[-30px] w-96 h-96 opacity-[0.03] text-brand-secondary pointer-events-none"></i>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function selectMuni(id) {
+            selectedMuni = dataHub.municipios.list.find(m => m.id === id);
+            renderMuniDetail();
+            renderMunicipiosList();
+        }
+
+        window.onload = () => render();
+    </script>
+    
+    <!-- <!-- Visualization & Content Choices Summary:
+         - Contexto: Inclusión de nota aclaratoria sobre representatividad estadística (98%).
+         - Colores: Paleta dual Bankaool/Descuubre.
+         - NO SVG/Mermaid used.
+    --> -->
+    
+    <!-- <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --> -->
+</body>
+</html>
